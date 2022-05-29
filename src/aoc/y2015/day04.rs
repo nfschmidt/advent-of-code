@@ -48,39 +48,23 @@ mod test {
     /* these tests are ignored by default because they have a long running time */
 
     use super::*;
-    use crate::aoc::Part;
+    use crate::aoc::{Part, test};
 
     #[test]
     #[ignore]
     fn solve_part1_case_1() {
-        test_case(Part::One, "abcdef", 609043);
+        test::test_case(Part::One, &mut Solution::new(), "abcdef", 609043);
     }
 
     #[test]
     #[ignore]
     fn solve_part1_case_2() {
-        test_case(Part::One, "pqrstuv", 1048970);
+        test::test_case(Part::One, &mut Solution::new(), "pqrstuv", 1048970);
     }
 
     #[test]
     #[ignore]
     fn solve_part2_case_1() {
-        test_case(Part::Two, "bgvyzdsv", 1038736);
-    }
-
-    fn test_case(part: Part, input: &str, expected: i32) {
-        let mut solver = Solution::new();
-        let got = solver.solve(part, input)
-            .unwrap()
-            .unwrap()
-            .to_string();
-
-        assert_eq!(
-            expected.to_string(),
-            got,
-            "input '{}', got: '{}', expected: '{}'",
-            input,
-            got,
-            expected);
+        test::test_case(Part::Two, &mut Solution::new(), "bgvyzdsv", 1038736);
     }
 }

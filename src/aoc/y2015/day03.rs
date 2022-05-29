@@ -101,52 +101,35 @@ impl AocSolution for Solution {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::aoc::Part;
-    use crate::aoc::Solution as AocSolution;
+    use crate::aoc::{Part, test};
 
     #[test]
     fn solve_part1_case_1() {
-        test_case(Part::One, ">", 2);
+        test::test_case(Part::One, &mut Solution::new(), ">", 2);
     }
 
     #[test]
     fn solve_part1_case_2() {
-        test_case(Part::One, "^>v<", 4);
+        test::test_case(Part::One, &mut Solution::new(), "^>v<", 4);
     }
 
     #[test]
     fn solve_part1_case_3() {
-        test_case(Part::One, "^v^v^v^v^v", 2);
+        test::test_case(Part::One, &mut Solution::new(), "^v^v^v^v^v", 2);
     }
 
     #[test]
     fn solve_part2_case_1() {
-        test_case(Part::Two, "^v", 3);
+        test::test_case(Part::Two, &mut Solution::new(), "^v", 3);
     }
 
     #[test]
     fn solve_part2_case_2() {
-        test_case(Part::Two, "^>v<", 3);
+        test::test_case(Part::Two, &mut Solution::new(), "^>v<", 3);
     }
 
     #[test]
     fn solve_part2_case_3() {
-        test_case(Part::Two, "^v^v^v^v^v", 11);
-    }
-
-    fn test_case(part: Part, input: &str, expected: i32) {
-        let mut solver = Solution::new();
-        let got = solver.solve(part, input)
-            .unwrap()
-            .unwrap()
-            .to_string();
-
-        assert_eq!(
-            expected.to_string(),
-            got,
-            "input '{}', got: '{}', expected: '{}'",
-            input,
-            got,
-            expected);
+        test::test_case(Part::Two, &mut Solution::new(), "^v^v^v^v^v", 11);
     }
 }

@@ -62,76 +62,60 @@ impl super::super::Solution for Solution {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::aoc::{Solution as AocSolution, Part};
+    use crate::aoc::{Part, test};
 
     #[test]
     fn solve_part1_case_1() {
-        test_case(Part::One, "(())", 0);
+        test::test_case(Part::One, &mut Solution::new(), "(())", 0);
     }
 
     #[test]
     fn solve_part1_case_2() {
-        test_case(Part::One, "()()", 0);
+        test::test_case(Part::One, &mut Solution::new(), "()()", 0);
     }
 
     #[test]
     fn solve_part1_case_3() {
-        test_case(Part::One, "(((", 3);
+        test::test_case(Part::One, &mut Solution::new(), "(((", 3);
     }
 
     #[test]
     fn solve_part1_case_4() {
-        test_case(Part::One, "(()(()(", 3);
+        test::test_case(Part::One, &mut Solution::new(), "(()(()(", 3);
     }
 
     #[test]
     fn solve_part1_case_5() {
-        test_case(Part::One, "))(((((", 3);
+        test::test_case(Part::One, &mut Solution::new(), "))(((((", 3);
     }
 
     #[test]
     fn solve_part1_case_6() {
-        test_case(Part::One, "())", -1);
+        test::test_case(Part::One, &mut Solution::new(), "())", -1);
     }
 
     #[test]
     fn solve_part1_case_7() {
-        test_case(Part::One, "))(", -1);
+        test::test_case(Part::One, &mut Solution::new(), "))(", -1);
     }
 
     #[test]
     fn solve_part1_case_8() {
-        test_case(Part::One, ")))", -3);
+        test::test_case(Part::One, &mut Solution::new(), ")))", -3);
     }
 
     #[test]
     fn solve_part1_case_9() {
-        test_case(Part::One, ")())())", -3);
+        test::test_case(Part::One, &mut Solution::new(), ")())())", -3);
     }
 
     #[test]
     fn solve_part2_case_1() {
-        test_case(Part::Two, ")", 1);
+        test::test_case(Part::Two, &mut Solution::new(), ")", 1);
     }
 
     #[test]
     fn solve_part2_case_2() {
-        test_case(Part::Two, "()())", 5);
-    }
-
-    fn test_case(part: Part, input: &str, expected: i32) {
-        let mut solver = Solution::new();
-        let got = solver.solve(part, input)
-            .unwrap()
-            .unwrap()
-            .to_string();
-
-        assert_eq!(
-            expected.to_string(),
-            got,
-            "input '{}', got: '{}', expected: '{}'",
-            input,
-            got,
-            expected);
+        test::test_case(Part::Two, &mut Solution::new(), "()())", 5);
     }
 }
