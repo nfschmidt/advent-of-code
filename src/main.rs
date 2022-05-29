@@ -1,8 +1,8 @@
+use std::env;
+use std::error::Error;
+use std::fmt::Display;
 use std::io;
 use std::io::Read;
-use std::error::Error;
-use std::env;
-use std::fmt::Display;
 use std::str::FromStr;
 
 enum Part {
