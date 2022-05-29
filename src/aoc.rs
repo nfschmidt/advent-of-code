@@ -37,3 +37,23 @@ pub trait Solution {
         }
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    pub fn test_case<T: Display>(part: Part, solver: &mut impl Solution, input: &str, expected: T) {
+        let got = solver.solve(part, input)
+            .unwrap()
+            .unwrap()
+            .to_string();
+
+        assert_eq!(
+            expected.to_string(),
+            got,
+            "input '{}', got: '{}', expected: '{}'",
+            input,
+            got,
+            expected);
+    }
+}
