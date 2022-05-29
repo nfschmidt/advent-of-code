@@ -1,7 +1,6 @@
 use std::fmt::Display;
 use std::error::Error;
 use crate::aoc::Solution as AocSolution;
-use std::str::FromStr;
 use std::collections::HashSet;
 
 enum Move {
@@ -11,16 +10,16 @@ enum Move {
     Left,
 }
 
-impl FromStr for Move {
-    type Err = String;
+impl TryFrom<char> for Move {
+    type Error = String;
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "^" => Ok(Move::Up),
-            ">" => Ok(Move::Right),
-            "v" => Ok(Move::Down),
-            "<" => Ok(Move::Left),
-            _ => Err(format!("Invalid move '{}'", s)),
+    fn try_from(value: char) -> Result<Move, Self::Error> {
+        match value {
+            '^' => Ok(Move::Up),
+            '>' => Ok(Move::Right),
+            'v' => Ok(Move::Down),
+            '<' => Ok(Move::Left),
+            _ => Err(format!("Invalid move '{}'", value)),
         }
     }
 }
@@ -43,7 +42,7 @@ impl AocSolution for Solution {
             input
             .trim()
             .chars()
-            .map(|c| c.to_string().parse())
+            .map(|c| Move::try_from(c))
             .collect::<Result<Vec<Move>, _>>()?;
 
         Ok(())
