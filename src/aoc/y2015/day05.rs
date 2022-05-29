@@ -107,8 +107,7 @@ impl AocSolution for Solution {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::aoc::Part;
-    use crate::aoc::test;
+    use crate::aoc::{Part, test};
 
     #[test]
     fn solve_part1_case_1() {
