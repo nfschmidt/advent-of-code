@@ -3,157 +3,7 @@ use std::error::Error;
 use std::fmt::Display;
 use std::io;
 use std::io::Read;
-use std::str::FromStr;
-
-enum Part {
-    One,
-    Two
-}
-
-impl FromStr for Part {
-    type Err = String;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "1" => Ok(Part::One),
-            "2" => Ok(Part::Two),
-            _ => Err(format!("Invalid part '{}'", s)),
-        }
-    }
-}
-
-trait Solution {
-    fn parse_input(&mut self, input: &str) -> Result<(), Box<dyn Error>>;
-
-    fn solve_part1(&self) -> Option<Box<dyn Display>>;
-
-    fn solve_part2(&self) -> Option<Box<dyn Display>>;
-
-    fn solve(&mut self, part: Part, input: &str) -> Result<Option<Box<dyn Display>>, Box<dyn Error>> {
-        self.parse_input(input)?;
-
-        match part {
-            Part::One => Ok(self.solve_part1()),
-            Part::Two => Ok(self.solve_part2()),
-        }
-    }
-}
-
-struct Day01 {
-    data: Vec<Step>
-}
-
-enum Step {
-    Up,
-    Down,
-}
-
-impl Day01 {
-    fn new() -> Day01 {
-        Day01 {
-            data: vec![],
-        }
-    }
-}
-
-impl Solution for Day01 {
-    fn parse_input(&mut self, input: &str) -> Result<(), Box<dyn Error>> {
-        self.data = Vec::new();
-        for c in input.chars() {
-            self.data.push(match c {
-                '(' => Step::Up,
-                ')' => Step::Down,
-                c => Err(format!("unexpected character: {}", c))?,
-            });
-        }
-
-        Ok(())
-    }
-
-    fn solve_part1(&self) -> Option<Box<dyn Display>> {
-        Some(Box::new(self.data
-             .iter()
-             .map(|s| match s {
-                 Step::Up => 1,
-                 Step::Down => -1,
-             })
-             .sum::<i32>()))
-    }
-
-    fn solve_part2(&self) -> Option<Box<dyn Display>> {
-        let mut floor = 0;
-        for (i, c) in self.data.iter().enumerate() {
-            floor += match c {
-                Step::Up => 1,
-                Step::Down => -1,
-            };
-
-            if floor == -1 {
-                return Some(Box::new(i+1));
-            }
-        }
-
-        None
-    }
-}
-
-struct Day02 {
-    data: Vec<(u32, u32, u32)>,
-}
-
-impl Day02 {
-    fn new() -> Day02 {
-        Day02 {
-            data: vec![],
-        }
-    }
-}
-
-impl Solution for Day02 {
-    fn parse_input(&mut self, input: &str) -> Result<(), Box<dyn Error>> {
-        self.data = Vec::new();
-
-        for (i, line) in input.lines().enumerate() {
-            let present = line
-                .split("x")
-                .map(|n| n.parse::<u32>())
-                .collect::<Result<Vec<_>, _>>()?;
-
-            if present.len() != 3 {
-                Err(format!("invalid present on line {}", i))?;
-            }
-
-            self.data.push((present[0], present[1], present[2]));
-        }
-
-        Ok(())
-    }
-
-    fn solve_part1(&self) -> Option<Box<dyn Display>> {
-        let result = self.data
-            .iter()
-            .map(|dims| {
-                let sides = [dims.0*dims.1, dims.0*dims.2, dims.1*dims.2];
-                return 2*sides.iter().sum::<u32>() + sides.iter().min().unwrap();
-            })
-            .sum::<u32>();
-
-        Some(Box::new(result))
-    }
-
-    fn solve_part2(&self) -> Option<Box<dyn Display>> {
-        let result = self.data
-            .iter()
-            .map(|dims| {
-                let mut ds = vec![dims.0, dims.1, dims.2];
-                ds.sort();
-                return 2*(ds[0]+ds[1]) + ds[0]*ds[1]*ds[2];
-            })
-            .sum::<u32>();
-
-        Some(Box::new(result))
-    }
-}
+use advent_of_code_rust::aoc::{Part, Solution, y2015};
 
 fn main() -> Result<(), Box<dyn Error>> {
     let mut args = env::args().skip(1);
@@ -175,8 +25,9 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 fn get_solver(year: u16, day: u8) -> Option<Box<dyn Solution>> {
     match (year, day) {
-        (2015, 1) => Some(Box::new(Day01::new())),
-        (2015, 2) => Some(Box::new(Day02::new())),
+        (2015, 1) => Some(Box::new(y2015::day01::Solution::new())),
+        (2015, 2) => Some(Box::new(y2015::day02::Solution::new())),
+        (2015, 3) => Some(Box::new(y2015::day03::Solution::new())),
         _ => None,
     }
 }
