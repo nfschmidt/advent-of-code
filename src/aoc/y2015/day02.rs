@@ -1,21 +1,20 @@
 use std::error::Error;
 use std::fmt::Display;
+use crate::aoc::DaySolution;
 
-pub struct Solution {
-    data: Vec<(u32, u32, u32)>,
-}
+pub struct Solution;
 
 impl Solution {
     pub fn new() -> Solution {
-        Solution {
-            data: vec![],
-        }
+        Solution
     }
 }
 
-impl super::super::Solution for Solution {
-    fn parse_input(&mut self, input: &str) -> Result<(), Box<dyn Error>> {
-        self.data = Vec::new();
+impl DaySolution for Solution {
+    type Data = Vec<(u32, u32, u32)>;
+
+    fn parse_input(&self, input: &str) -> Result<Self::Data, Box<dyn Error>> {
+        let mut data = Vec::new();
 
         for (i, line) in input.lines().enumerate() {
             let present = line
@@ -27,14 +26,15 @@ impl super::super::Solution for Solution {
                 Err(format!("invalid present on line {}", i))?;
             }
 
-            self.data.push((present[0], present[1], present[2]));
+            data.push((present[0], present[1], present[2]));
         }
 
-        Ok(())
+        Ok(data)
     }
 
-    fn solve_part1(&self) -> Option<Box<dyn Display>> {
-        let result = self.data
+    fn solve_part1(&self, data: Self::Data) -> Option<Box<dyn Display>> {
+        let result =
+            data
             .iter()
             .map(|dims| {
                 let sides = [dims.0*dims.1, dims.0*dims.2, dims.1*dims.2];
@@ -45,8 +45,9 @@ impl super::super::Solution for Solution {
         Some(Box::new(result))
     }
 
-    fn solve_part2(&self) -> Option<Box<dyn Display>> {
-        let result = self.data
+    fn solve_part2(&self, data: Self::Data) -> Option<Box<dyn Display>> {
+        let result =
+            data
             .iter()
             .map(|dims| {
                 let mut ds = vec![dims.0, dims.1, dims.2];

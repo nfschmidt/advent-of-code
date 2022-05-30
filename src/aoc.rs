@@ -21,19 +21,21 @@ impl FromStr for Part {
     }
 }
 
-pub trait Solution {
-    fn parse_input(&mut self, input: &str) -> Result<(), Box<dyn Error>>;
+pub trait DaySolution {
+    type Data;
 
-    fn solve_part1(&self) -> Option<Box<dyn Display>>;
+    fn parse_input(&self, input: &str) -> Result<Self::Data, Box<dyn Error>>;
 
-    fn solve_part2(&self) -> Option<Box<dyn Display>>;
+    fn solve_part1(&self, data: Self::Data) -> Option<Box<dyn Display>>;
 
-    fn solve(&mut self, part: Part, input: &str) -> Result<Option<Box<dyn Display>>, Box<dyn Error>> {
-        self.parse_input(input)?;
+    fn solve_part2(&self, data: Self::Data) -> Option<Box<dyn Display>>;
+
+    fn solve(&self, part: Part, input: &str) -> Result<Option<Box<dyn Display>>, Box<dyn Error>> {
+        let data = self.parse_input(input)?;
 
         match part {
-            Part::One => Ok(self.solve_part1()),
-            Part::Two => Ok(self.solve_part2()),
+            Part::One => Ok(self.solve_part1(data)),
+            Part::Two => Ok(self.solve_part2(data)),
         }
     }
 }
@@ -42,7 +44,7 @@ pub trait Solution {
 mod test {
     use super::*;
 
-    pub fn test_case<T: Display>(part: Part, solver: &mut impl Solution, input: &str, expected: T) {
+    pub fn test_case<T: Display>(part: Part, solver: impl DaySolution, input: &str, expected: T) {
         let got = solver.solve(part, input)
             .unwrap()
             .unwrap()

@@ -1,22 +1,13 @@
 use std::collections::HashSet;
 use std::error::Error;
 use std::fmt::Display;
-use crate::aoc::Solution as AocSolution;
+use crate::aoc::DaySolution;
 
-pub struct Solution {
-    data: Vec<String>,
-}
+pub struct Solution;
 
 impl Solution {
-    pub fn new() -> Solution {
-        Solution {
-            data: vec![],
-        }
-    }
-
-    fn nice_count(&self, is_nice: impl Fn(&str) -> bool) -> u32 {
-        self
-            .data
+    fn nice_count(&self, is_nice: impl Fn(&str) -> bool, data: Vec<String>) -> u32 {
+        data
             .iter()
             .filter(|s| is_nice(s.as_str()))
             .collect::<Vec<_>>()
@@ -24,19 +15,18 @@ impl Solution {
     }
 }
 
-impl AocSolution for Solution {
-    fn parse_input(&mut self, input: &str) -> Result<(), Box<dyn Error>> {
-        self.data =
-            input
-            .trim()
-            .lines()
-            .map(|s| s.to_string())
-            .collect();
+impl DaySolution for Solution {
+    type Data = Vec<String>;
 
-        Ok(())
+    fn parse_input(&self, input: &str) -> Result<Self::Data, Box<dyn Error>> {
+        Ok(input
+           .trim()
+           .lines()
+           .map(|s| s.to_string())
+           .collect())
     }
 
-    fn solve_part1(&self) -> Option<Box<dyn Display>> {
+    fn solve_part1(&self, data: Self::Data) -> Option<Box<dyn Display>> {
         let vowels = HashSet::from(['a', 'e', 'i', 'o', 'u']);
         let invalids = HashSet::from(["ab", "cd", "pq", "xy"]);
 
@@ -63,12 +53,12 @@ impl AocSolution for Solution {
             }
 
             return vowel >= 3 && twice;
-        });
+        }, data);
 
         Some(Box::new(nice))
     }
 
-    fn solve_part2(&self) -> Option<Box<dyn Display>> {
+    fn solve_part2(&self, data: Self::Data) -> Option<Box<dyn Display>> {
         let nice = self.nice_count(|s| {
             if s.len() < 2 {
                 return false
@@ -98,7 +88,7 @@ impl AocSolution for Solution {
             }
 
             return twice && repeat;
-        });
+        }, data);
 
         Some(Box::new(nice))
     }
@@ -111,46 +101,46 @@ mod test {
 
     #[test]
     fn solve_part1_case_1() {
-        test::test_case(Part::One, &mut Solution::new(), "ugknbfddgicrmopn", 1);
+        test::test_case(Part::One, Solution, "ugknbfddgicrmopn", 1);
     }
 
     #[test]
     fn solve_part1_case_2() {
-        test::test_case(Part::One, &mut Solution::new(), "aaa", 1);
+        test::test_case(Part::One, Solution, "aaa", 1);
     }
 
     #[test]
     fn solve_part1_case_3() {
-        test::test_case(Part::One, &mut Solution::new(), "jchzalrnumimnmhp", 0);
+        test::test_case(Part::One, Solution, "jchzalrnumimnmhp", 0);
     }
 
     #[test]
     fn solve_part1_case_4() {
-        test::test_case(Part::One, &mut Solution::new(), "haegwjzuvuyypxyu", 0);
+        test::test_case(Part::One, Solution, "haegwjzuvuyypxyu", 0);
     }
 
     #[test]
     fn solve_part1_case_5() {
-        test::test_case(Part::One, &mut Solution::new(), "dvszwmarrgswjxmb", 0);
+        test::test_case(Part::One, Solution, "dvszwmarrgswjxmb", 0);
     }
 
     #[test]
     fn solve_part2_case_1() {
-        test::test_case(Part::Two, &mut Solution::new(), "qjhvhtzxzqqjkmpb", 1);
+        test::test_case(Part::Two, Solution, "qjhvhtzxzqqjkmpb", 1);
     }
 
     #[test]
     fn solve_part2_case_2() {
-        test::test_case(Part::Two, &mut Solution::new(), "xxyxx", 1);
+        test::test_case(Part::Two, Solution, "xxyxx", 1);
     }
 
     #[test]
     fn solve_part2_case_3() {
-        test::test_case(Part::Two, &mut Solution::new(), "uurcxstgmygtbstg", 0);
+        test::test_case(Part::Two, Solution, "uurcxstgmygtbstg", 0);
     }
 
     #[test]
     fn solve_part2_case_4() {
-        test::test_case(Part::Two, &mut Solution::new(), "ieodomkazucvgmuy", 0);
+        test::test_case(Part::Two, Solution, "ieodomkazucvgmuy", 0);
     }
 }
