@@ -1,4 +1,3 @@
-use std::fmt::Display;
 use crate::aoc::{DaySolution, Error, Result};
 
 pub struct Solution;
@@ -24,9 +23,9 @@ impl Solution {
     }
 }
 
-impl DaySolution for Solution {
+impl DaySolution<u32> for Solution {
     // TODO: refactor duplicated code
-    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>> {
+    fn solve_part1(&self, input: &str) -> Result<u32> {
         let result =
             self.parse_input(input)?
             .iter()
@@ -36,10 +35,10 @@ impl DaySolution for Solution {
             })
             .sum::<u32>();
 
-        Ok(Box::new(result))
+        Ok(result)
     }
 
-    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>> {
+    fn solve_part2(&self, input: &str) -> Result<u32> {
         let result =
             self.parse_input(input)?
             .iter()
@@ -50,6 +49,6 @@ impl DaySolution for Solution {
             })
             .sum::<u32>();
 
-        Ok(Box::new(result))
+        Ok(result)
     }
 }

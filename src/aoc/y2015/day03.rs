@@ -1,4 +1,3 @@
-use std::fmt::Display;
 use crate::aoc::{DaySolution, Error, Result};
 use std::collections::HashSet;
 
@@ -38,8 +37,8 @@ impl Solution {
     }
 }
 
-impl DaySolution for Solution {
-    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>> {
+impl DaySolution<usize> for Solution {
+    fn solve_part1(&self, input: &str) -> Result<usize> {
         let mut position = (0, 0);
 
         let mut seen = HashSet::new();
@@ -56,10 +55,10 @@ impl DaySolution for Solution {
             seen.insert(position);
         }
 
-        Ok(Box::new(seen.len().to_string()))
+        Ok(seen.len())
     }
 
-    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>> {
+    fn solve_part2(&self, input: &str) -> Result<usize> {
         let mut santa_pos = (0, 0);
         let mut robot_pos = (0, 0);
 
@@ -84,7 +83,7 @@ impl DaySolution for Solution {
             seen.insert(*current_pos);
         }
 
-        Ok(Box::new(seen.len().to_string()))
+        Ok(seen.len())
     }
 }
 

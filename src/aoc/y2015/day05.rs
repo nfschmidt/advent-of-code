@@ -1,5 +1,4 @@
 use std::collections::HashSet;
-use std::fmt::Display;
 use crate::aoc::{DaySolution, Result};
 
 pub struct Solution;
@@ -22,8 +21,8 @@ impl Solution {
     }
 }
 
-impl DaySolution for Solution {
-    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>> {
+impl DaySolution<u32> for Solution {
+    fn solve_part1(&self, input: &str) -> Result<u32> {
         let vowels = HashSet::from(['a', 'e', 'i', 'o', 'u']);
         let invalids = HashSet::from(["ab", "cd", "pq", "xy"]);
 
@@ -53,10 +52,10 @@ impl DaySolution for Solution {
             return vowel >= 3 && twice;
         }, data);
 
-        Ok(Box::new(nice))
+        Ok(nice)
     }
 
-    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>> {
+    fn solve_part2(&self, input: &str) -> Result<u32> {
         let data = self.parse_input(input)?;
         let nice = self.nice_count(|s| {
             if s.len() < 2 {
@@ -89,7 +88,7 @@ impl DaySolution for Solution {
             return twice && repeat;
         }, data);
 
-        Ok(Box::new(nice))
+        Ok(nice)
     }
 }
 

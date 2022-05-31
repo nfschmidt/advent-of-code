@@ -1,4 +1,3 @@
-use std::fmt::Display;
 use crate::aoc::{DaySolution, Error, Result};
 
 enum Step {
@@ -23,19 +22,19 @@ impl Solution {
     }
 }
 
-impl DaySolution for Solution {
-    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>> {
+impl DaySolution<i32> for Solution {
+    fn solve_part1(&self, input: &str) -> Result<i32> {
         let data = self.parse_input(input)?;
-        Ok(Box::new(data
+        Ok(data
              .iter()
              .map(|s| match s {
                  Step::Up => 1,
                  Step::Down => -1,
              })
-             .sum::<i32>()))
+             .sum::<i32>())
     }
 
-    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>> {
+    fn solve_part2(&self, input: &str) -> Result<i32> {
         let data = self.parse_input(input)?;
 
         let mut floor = 0;
@@ -46,7 +45,7 @@ impl DaySolution for Solution {
             };
 
             if floor == -1 {
-                return Ok(Box::new(i+1));
+                return Ok((i+1).try_into().unwrap());
             }
         }
 

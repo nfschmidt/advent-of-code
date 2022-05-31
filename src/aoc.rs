@@ -40,12 +40,12 @@ impl fmt::Debug for Error {
 
 impl StdError for Error {}
 
-type Result<T> = std::result::Result<T, Error>;
+pub type Result<T> = std::result::Result<T, Error>;
 
-pub trait DaySolution {
-    fn solve_part1(&self, input: &str) -> Result<Box<dyn fmt::Display>>;
+pub trait DaySolution<T> {
+    fn solve_part1(&self, input: &str) -> Result<T>;
 
-    fn solve_part2(&self, input: &str) -> Result<Box<dyn fmt::Display>>;
+    fn solve_part2(&self, input: &str) -> Result<T>;
 }
 
 #[cfg(test)]
@@ -57,7 +57,7 @@ mod test {
         Two,
     }
 
-    pub fn test_case<T: fmt::Display>(part: Part, solution: impl DaySolution, input: &str, expected: T) {
+    pub fn test_case<T: fmt::Display>(part: Part, solution: impl DaySolution<T>, input: &str, expected: T) {
         let result = match part {
             Part::One => solution.solve_part1(input),
             Part::Two => solution.solve_part2(input),

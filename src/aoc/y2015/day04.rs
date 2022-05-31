@@ -1,4 +1,3 @@
-use std::fmt::Display;
 use crate::aoc::{DaySolution, Error, Result};
 use md5::Digest;
 
@@ -19,15 +18,15 @@ impl Solution {
     }
 }
 
-impl DaySolution for Solution {
-    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>> {
+impl DaySolution<u32> for Solution {
+    fn solve_part1(&self, input: &str) -> Result<u32> {
         let data = input.trim();
-        Ok(Box::new(self.solve_leading_zeros(5, &data)?))
+        Ok(self.solve_leading_zeros(5, &data)?)
     }
 
-    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>> {
+    fn solve_part2(&self, input: &str) -> Result<u32> {
         let data = input.trim();
-        Ok(Box::new(self.solve_leading_zeros(6, &data)?))
+        Ok(self.solve_leading_zeros(6, &data)?)
     }
 }
 
