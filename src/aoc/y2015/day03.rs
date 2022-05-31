@@ -3,7 +3,7 @@ use std::error::Error;
 use crate::aoc::DaySolution;
 use std::collections::HashSet;
 
-pub enum Move {
+enum Move {
     Up,
     Right,
     Down,
@@ -26,10 +26,8 @@ impl TryFrom<char> for Move {
 
 pub struct Solution;
 
-impl DaySolution for Solution {
-    type Data = Vec<Move>;
-
-    fn parse_input(&self, input: &str) -> Result<Self::Data, Box<dyn Error>> {
+impl Solution {
+    fn parse_input(&self, input: &str) -> Result<Vec<Move>, Box<dyn Error>> {
         let data =
             input
             .trim()
@@ -39,14 +37,16 @@ impl DaySolution for Solution {
 
         Ok(data)
     }
+}
 
-    fn solve_part1(&self, data: Self::Data) -> Option<Box<dyn Display>> {
+impl DaySolution for Solution {
+    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>, Box<dyn Error>> {
         let mut position = (0, 0);
 
         let mut seen = HashSet::new();
         seen.insert(position);
 
-        for m in data.iter() {
+        for m in self.parse_input(input)?.iter() {
             position = match m {
                 Move::Up => (position.0, position.1+1),
                 Move::Right => (position.0+1, position.1),
@@ -57,17 +57,17 @@ impl DaySolution for Solution {
             seen.insert(position);
         }
 
-        Some(Box::new(seen.len().to_string()))
+        Ok(Box::new(seen.len().to_string()))
     }
 
-    fn solve_part2(&self, data: Self::Data) -> Option<Box<dyn Display>> {
+    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>, Box<dyn Error>> {
         let mut santa_pos = (0, 0);
         let mut robot_pos = (0, 0);
 
         let mut seen = HashSet::new();
         seen.insert(santa_pos);
 
-        for (i, m) in data.iter().enumerate() {
+        for (i, m) in self.parse_input(input)?.iter().enumerate() {
             let current_pos =
                 if i % 2 == 0 {
                     &mut santa_pos
@@ -85,42 +85,42 @@ impl DaySolution for Solution {
             seen.insert(*current_pos);
         }
 
-        Some(Box::new(seen.len().to_string()))
+        Ok(Box::new(seen.len().to_string()))
     }
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::aoc::{Part, test};
+    use crate::aoc::test::{test_case, Part};
 
     #[test]
     fn solve_part1_case_1() {
-        test::test_case(Part::One, Solution, ">", 2);
+        test_case(Part::One, Solution, ">", 2);
     }
 
     #[test]
     fn solve_part1_case_2() {
-        test::test_case(Part::One, Solution, "^>v<", 4);
+        test_case(Part::One, Solution, "^>v<", 4);
     }
 
     #[test]
     fn solve_part1_case_3() {
-        test::test_case(Part::One, Solution, "^v^v^v^v^v", 2);
+        test_case(Part::One, Solution, "^v^v^v^v^v", 2);
     }
 
     #[test]
     fn solve_part2_case_1() {
-        test::test_case(Part::Two, Solution, "^v", 3);
+        test_case(Part::Two, Solution, "^v", 3);
     }
 
     #[test]
     fn solve_part2_case_2() {
-        test::test_case(Part::Two, Solution, "^>v<", 3);
+        test_case(Part::Two, Solution, "^>v<", 3);
     }
 
     #[test]
     fn solve_part2_case_3() {
-        test::test_case(Part::Two, Solution, "^v^v^v^v^v", 11);
+        test_case(Part::Two, Solution, "^v^v^v^v^v", 11);
     }
 }

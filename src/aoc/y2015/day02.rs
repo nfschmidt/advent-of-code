@@ -5,15 +5,7 @@ use crate::aoc::DaySolution;
 pub struct Solution;
 
 impl Solution {
-    pub fn new() -> Solution {
-        Solution
-    }
-}
-
-impl DaySolution for Solution {
-    type Data = Vec<(u32, u32, u32)>;
-
-    fn parse_input(&self, input: &str) -> Result<Self::Data, Box<dyn Error>> {
+    fn parse_input(&self, input: &str) -> Result<Vec<(u32, u32, u32)>, Box<dyn Error>> {
         let mut data = Vec::new();
 
         for (i, line) in input.lines().enumerate() {
@@ -31,10 +23,13 @@ impl DaySolution for Solution {
 
         Ok(data)
     }
+}
 
-    fn solve_part1(&self, data: Self::Data) -> Option<Box<dyn Display>> {
+impl DaySolution for Solution {
+    // TODO: refactor duplicated code
+    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>, Box<dyn Error>> {
         let result =
-            data
+            self.parse_input(input)?
             .iter()
             .map(|dims| {
                 let sides = [dims.0*dims.1, dims.0*dims.2, dims.1*dims.2];
@@ -42,12 +37,12 @@ impl DaySolution for Solution {
             })
             .sum::<u32>();
 
-        Some(Box::new(result))
+        Ok(Box::new(result))
     }
 
-    fn solve_part2(&self, data: Self::Data) -> Option<Box<dyn Display>> {
+    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>, Box<dyn Error>> {
         let result =
-            data
+            self.parse_input(input)?
             .iter()
             .map(|dims| {
                 let mut ds = vec![dims.0, dims.1, dims.2];
@@ -56,6 +51,6 @@ impl DaySolution for Solution {
             })
             .sum::<u32>();
 
-        Some(Box::new(result))
+        Ok(Box::new(result))
     }
 }

@@ -13,23 +13,22 @@ impl Solution {
             .collect::<Vec<_>>()
             .len() as u32
     }
-}
 
-impl DaySolution for Solution {
-    type Data = Vec<String>;
-
-    fn parse_input(&self, input: &str) -> Result<Self::Data, Box<dyn Error>> {
+    fn parse_input(&self, input: &str) -> Result<Vec<String>, Box<dyn Error>> {
         Ok(input
            .trim()
            .lines()
            .map(|s| s.to_string())
            .collect())
     }
+}
 
-    fn solve_part1(&self, data: Self::Data) -> Option<Box<dyn Display>> {
+impl DaySolution for Solution {
+    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>, Box<dyn Error>> {
         let vowels = HashSet::from(['a', 'e', 'i', 'o', 'u']);
         let invalids = HashSet::from(["ab", "cd", "pq", "xy"]);
 
+        let data = self.parse_input(input)?;
         let nice = self.nice_count(|s| {
             let mut vowel = 0;
             let mut twice = false;
@@ -55,10 +54,11 @@ impl DaySolution for Solution {
             return vowel >= 3 && twice;
         }, data);
 
-        Some(Box::new(nice))
+        Ok(Box::new(nice))
     }
 
-    fn solve_part2(&self, data: Self::Data) -> Option<Box<dyn Display>> {
+    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>, Box<dyn Error>> {
+        let data = self.parse_input(input)?;
         let nice = self.nice_count(|s| {
             if s.len() < 2 {
                 return false
@@ -90,57 +90,57 @@ impl DaySolution for Solution {
             return twice && repeat;
         }, data);
 
-        Some(Box::new(nice))
+        Ok(Box::new(nice))
     }
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::aoc::{Part, test};
+    use crate::aoc::test::{test_case, Part};
 
     #[test]
     fn solve_part1_case_1() {
-        test::test_case(Part::One, Solution, "ugknbfddgicrmopn", 1);
+        test_case(Part::One, Solution, "ugknbfddgicrmopn", 1);
     }
 
     #[test]
     fn solve_part1_case_2() {
-        test::test_case(Part::One, Solution, "aaa", 1);
+        test_case(Part::One, Solution, "aaa", 1);
     }
 
     #[test]
     fn solve_part1_case_3() {
-        test::test_case(Part::One, Solution, "jchzalrnumimnmhp", 0);
+        test_case(Part::One, Solution, "jchzalrnumimnmhp", 0);
     }
 
     #[test]
     fn solve_part1_case_4() {
-        test::test_case(Part::One, Solution, "haegwjzuvuyypxyu", 0);
+        test_case(Part::One, Solution, "haegwjzuvuyypxyu", 0);
     }
 
     #[test]
     fn solve_part1_case_5() {
-        test::test_case(Part::One, Solution, "dvszwmarrgswjxmb", 0);
+        test_case(Part::One, Solution, "dvszwmarrgswjxmb", 0);
     }
 
     #[test]
     fn solve_part2_case_1() {
-        test::test_case(Part::Two, Solution, "qjhvhtzxzqqjkmpb", 1);
+        test_case(Part::Two, Solution, "qjhvhtzxzqqjkmpb", 1);
     }
 
     #[test]
     fn solve_part2_case_2() {
-        test::test_case(Part::Two, Solution, "xxyxx", 1);
+        test_case(Part::Two, Solution, "xxyxx", 1);
     }
 
     #[test]
     fn solve_part2_case_3() {
-        test::test_case(Part::Two, Solution, "uurcxstgmygtbstg", 0);
+        test_case(Part::Two, Solution, "uurcxstgmygtbstg", 0);
     }
 
     #[test]
     fn solve_part2_case_4() {
-        test::test_case(Part::Two, Solution, "ieodomkazucvgmuy", 0);
+        test_case(Part::Two, Solution, "ieodomkazucvgmuy", 0);
     }
 }

@@ -21,43 +21,39 @@ impl Solution {
 }
 
 impl DaySolution for Solution {
-    type Data = String;
-
-    fn parse_input(&self, input: &str) -> Result<Self::Data, Box<dyn Error>> {
-        Ok(input.trim().to_string())
+    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>, Box<dyn Error>> {
+        let data = input.trim();
+        Ok(Box::new(self.solve_leading_zeros(5, &data).ok_or("result not found".to_string())?))
     }
 
-    fn solve_part1(&self, input: Self::Data) -> Option<Box<dyn Display>> {
-        Some(Box::new(self.solve_leading_zeros(5, &input)?))
-    }
-
-    fn solve_part2(&self, input: Self::Data) -> Option<Box<dyn Display>> {
-        Some(Box::new(self.solve_leading_zeros(6, &input)?))
+    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>, Box<dyn Error>> {
+        let data = input.trim();
+        Ok(Box::new(self.solve_leading_zeros(6, &data).ok_or("result not found".to_string())?))
     }
 }
 
 #[cfg(test)]
 mod test {
-    // these tests are ignored by default because they have a long running time
+    // these tests are ignored by default because they have a long running ti
 
     use super::*;
-    use crate::aoc::{Part, test};
+    use crate::aoc::test::{test_case, Part};
 
     #[test]
     #[ignore]
     fn solve_part1_case_1() {
-        test::test_case(Part::One, Solution, "abcdef", 609043);
+        test_case(Part::One, Solution, "abcdef", 609043);
     }
 
     #[test]
     #[ignore]
     fn solve_part1_case_2() {
-        test::test_case(Part::One, Solution, "pqrstuv", 1048970);
+        test_case(Part::One, Solution, "pqrstuv", 1048970);
     }
 
     #[test]
     #[ignore]
     fn solve_part2_case_1() {
-        test::test_case(Part::Two, Solution, "bgvyzdsv", 1038736);
+        test_case(Part::Two, Solution, "bgvyzdsv", 1038736);
     }
 }
