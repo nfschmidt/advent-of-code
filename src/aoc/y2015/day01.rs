@@ -1,6 +1,5 @@
-use std::error::Error;
 use std::fmt::Display;
-use crate::aoc::DaySolution;
+use crate::aoc::{DaySolution, Error};
 
 enum Step {
     Up,
@@ -10,13 +9,13 @@ enum Step {
 pub struct Solution;
 
 impl Solution {
-    fn parse_input(&self, input: &str) -> Result<Vec<Step>, Box<dyn Error>> {
+    fn parse_input(&self, input: &str) -> Result<Vec<Step>, Error> {
         let mut data = Vec::new();
         for c in input.trim().chars() {
             data.push(match c {
                 '(' => Step::Up,
                 ')' => Step::Down,
-                c => Err(format!("unexpected character: {}", c))?,
+                _ => return Err(Error::InvalidInput),
             });
         }
 
@@ -25,7 +24,7 @@ impl Solution {
 }
 
 impl DaySolution for Solution {
-    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>, Box<dyn Error>> {
+    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>, Error> {
         let data = self.parse_input(input)?;
         Ok(Box::new(data
              .iter()
@@ -36,7 +35,7 @@ impl DaySolution for Solution {
              .sum::<i32>()))
     }
 
-    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>, Box<dyn Error>> {
+    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>, Error> {
         let data = self.parse_input(input)?;
 
         let mut floor = 0;
@@ -51,7 +50,7 @@ impl DaySolution for Solution {
             }
         }
 
-        Err("result not found".to_string())?
+        Err(Error::ResultNotFound)
     }
 }
 

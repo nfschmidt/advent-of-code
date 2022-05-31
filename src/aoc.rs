@@ -1,12 +1,50 @@
 pub mod y2015;
 
-use std::fmt::Display;
-use std::error::Error;
+use std::fmt;
+use std::error::Error as StdError;
+
+pub enum Error {
+    InvalidInput,
+    ResultNotFound,
+    GenericError{
+        message: String,
+        source: Box<dyn StdError>,
+    },
+}
+
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Error::InvalidInput =>
+                write!(f, "invalid input"),
+            Error::ResultNotFound =>
+                write!(f, "result not found"),
+            Error::GenericError{message, ..} =>
+                write!(f, "an unexpected error ocurred: {}", message),
+        }
+    }
+}
+
+impl fmt::Debug for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Error::InvalidInput =>
+                write!(f, "invalid input"),
+            Error::ResultNotFound =>
+                write!(f, "result not found"),
+            Error::GenericError{message, ..} =>
+                write!(f, "an unexpected error ocurred: {}", message),
+        }
+    }
+}
+
+impl StdError for Error {}
+
 
 pub trait DaySolution {
-    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>, Box<dyn Error>>;
+    fn solve_part1(&self, input: &str) -> Result<Box<dyn fmt::Display>, Error>;
 
-    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>, Box<dyn Error>>;
+    fn solve_part2(&self, input: &str) -> Result<Box<dyn fmt::Display>, Error>;
 }
 
 #[cfg(test)]
@@ -18,7 +56,7 @@ mod test {
         Two,
     }
 
-    pub fn test_case<T: Display>(part: Part, solution: impl DaySolution, input: &str, expected: T) {
+    pub fn test_case<T: fmt::Display>(part: Part, solution: impl DaySolution, input: &str, expected: T) {
         let result = match part {
             Part::One => solution.solve_part1(input),
             Part::Two => solution.solve_part2(input),

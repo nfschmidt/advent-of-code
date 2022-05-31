@@ -1,21 +1,20 @@
-use std::error::Error;
 use std::fmt::Display;
-use crate::aoc::DaySolution;
+use crate::aoc::{DaySolution, Error};
 
 pub struct Solution;
 
 impl Solution {
-    fn parse_input(&self, input: &str) -> Result<Vec<(u32, u32, u32)>, Box<dyn Error>> {
+    fn parse_input(&self, input: &str) -> Result<Vec<(u32, u32, u32)>, Error> {
         let mut data = Vec::new();
 
-        for (i, line) in input.lines().enumerate() {
+        for line in input.lines() {
             let present = line
                 .split("x")
-                .map(|n| n.parse::<u32>())
+                .map(|n| n.parse::<u32>().map_err(|_| Error::InvalidInput))
                 .collect::<Result<Vec<_>, _>>()?;
 
             if present.len() != 3 {
-                Err(format!("invalid present on line {}", i))?;
+                return Err(Error::InvalidInput);
             }
 
             data.push((present[0], present[1], present[2]));
@@ -27,7 +26,7 @@ impl Solution {
 
 impl DaySolution for Solution {
     // TODO: refactor duplicated code
-    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>, Box<dyn Error>> {
+    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>, Error> {
         let result =
             self.parse_input(input)?
             .iter()
@@ -40,7 +39,7 @@ impl DaySolution for Solution {
         Ok(Box::new(result))
     }
 
-    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>, Box<dyn Error>> {
+    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>, Error> {
         let result =
             self.parse_input(input)?
             .iter()

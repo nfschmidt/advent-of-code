@@ -1,6 +1,5 @@
 use std::fmt::Display;
-use std::error::Error;
-use crate::aoc::DaySolution;
+use crate::aoc::{DaySolution, Error};
 use std::collections::HashSet;
 
 enum Move {
@@ -11,7 +10,7 @@ enum Move {
 }
 
 impl TryFrom<char> for Move {
-    type Error = String;
+    type Error = Error;
 
     fn try_from(value: char) -> Result<Move, Self::Error> {
         match value {
@@ -19,7 +18,7 @@ impl TryFrom<char> for Move {
             '>' => Ok(Move::Right),
             'v' => Ok(Move::Down),
             '<' => Ok(Move::Left),
-            _ => Err(format!("Invalid move '{}'", value)),
+            _ => Err(Error::InvalidInput),
         }
     }
 }
@@ -27,7 +26,7 @@ impl TryFrom<char> for Move {
 pub struct Solution;
 
 impl Solution {
-    fn parse_input(&self, input: &str) -> Result<Vec<Move>, Box<dyn Error>> {
+    fn parse_input(&self, input: &str) -> Result<Vec<Move>, Error> {
         let data =
             input
             .trim()
@@ -40,7 +39,7 @@ impl Solution {
 }
 
 impl DaySolution for Solution {
-    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>, Box<dyn Error>> {
+    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>, Error> {
         let mut position = (0, 0);
 
         let mut seen = HashSet::new();
@@ -60,7 +59,7 @@ impl DaySolution for Solution {
         Ok(Box::new(seen.len().to_string()))
     }
 
-    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>, Box<dyn Error>> {
+    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>, Error> {
         let mut santa_pos = (0, 0);
         let mut robot_pos = (0, 0);
 

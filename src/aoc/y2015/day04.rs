@@ -1,34 +1,33 @@
 use std::fmt::Display;
-use std::error::Error;
-use crate::aoc::DaySolution;
+use crate::aoc::{DaySolution, Error};
 use md5::Digest;
 
 pub struct Solution;
 
 impl Solution {
-    fn solve_leading_zeros(&self, zeros_count: usize, input: &str) -> Option<u32> {
+    fn solve_leading_zeros(&self, zeros_count: usize, input: &str) -> Result<u32, Error> {
         for i in 0u32..std::u32::MAX {
             let data = format!("{}{}", input, i);
             let hash = md5::Md5::digest(data.as_bytes());
 
             if format!("{:x}", hash).starts_with(&"0".repeat(zeros_count)) {
-                return Some(i)
+                return Ok(i)
             }
         }
 
-        None
+        Err(Error::ResultNotFound)
     }
 }
 
 impl DaySolution for Solution {
-    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>, Box<dyn Error>> {
+    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>, Error> {
         let data = input.trim();
-        Ok(Box::new(self.solve_leading_zeros(5, &data).ok_or("result not found".to_string())?))
+        Ok(Box::new(self.solve_leading_zeros(5, &data)?))
     }
 
-    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>, Box<dyn Error>> {
+    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>, Error> {
         let data = input.trim();
-        Ok(Box::new(self.solve_leading_zeros(6, &data).ok_or("result not found".to_string())?))
+        Ok(Box::new(self.solve_leading_zeros(6, &data)?))
     }
 }
 
