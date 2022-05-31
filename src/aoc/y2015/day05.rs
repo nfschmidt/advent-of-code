@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 use std::fmt::Display;
-use crate::aoc::{DaySolution, Error};
+use crate::aoc::{DaySolution, Result};
 
 pub struct Solution;
 
@@ -13,7 +13,7 @@ impl Solution {
             .len() as u32
     }
 
-    fn parse_input(&self, input: &str) -> Result<Vec<String>, Error> {
+    fn parse_input(&self, input: &str) -> Result<Vec<String>> {
         Ok(input
            .trim()
            .lines()
@@ -23,7 +23,7 @@ impl Solution {
 }
 
 impl DaySolution for Solution {
-    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>, Error> {
+    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>> {
         let vowels = HashSet::from(['a', 'e', 'i', 'o', 'u']);
         let invalids = HashSet::from(["ab", "cd", "pq", "xy"]);
 
@@ -56,7 +56,7 @@ impl DaySolution for Solution {
         Ok(Box::new(nice))
     }
 
-    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>, Error> {
+    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>> {
         let data = self.parse_input(input)?;
         let nice = self.nice_count(|s| {
             if s.len() < 2 {

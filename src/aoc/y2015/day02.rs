@@ -1,17 +1,17 @@
 use std::fmt::Display;
-use crate::aoc::{DaySolution, Error};
+use crate::aoc::{DaySolution, Error, Result};
 
 pub struct Solution;
 
 impl Solution {
-    fn parse_input(&self, input: &str) -> Result<Vec<(u32, u32, u32)>, Error> {
+    fn parse_input(&self, input: &str) -> Result<Vec<(u32, u32, u32)>> {
         let mut data = Vec::new();
 
         for line in input.lines() {
             let present = line
                 .split("x")
                 .map(|n| n.parse::<u32>().map_err(|_| Error::InvalidInput))
-                .collect::<Result<Vec<_>, _>>()?;
+                .collect::<Result<Vec<_>>>()?;
 
             if present.len() != 3 {
                 return Err(Error::InvalidInput);
@@ -26,7 +26,7 @@ impl Solution {
 
 impl DaySolution for Solution {
     // TODO: refactor duplicated code
-    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>, Error> {
+    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>> {
         let result =
             self.parse_input(input)?
             .iter()
@@ -39,7 +39,7 @@ impl DaySolution for Solution {
         Ok(Box::new(result))
     }
 
-    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>, Error> {
+    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>> {
         let result =
             self.parse_input(input)?
             .iter()

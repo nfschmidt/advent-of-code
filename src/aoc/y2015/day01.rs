@@ -1,5 +1,5 @@
 use std::fmt::Display;
-use crate::aoc::{DaySolution, Error};
+use crate::aoc::{DaySolution, Error, Result};
 
 enum Step {
     Up,
@@ -9,7 +9,7 @@ enum Step {
 pub struct Solution;
 
 impl Solution {
-    fn parse_input(&self, input: &str) -> Result<Vec<Step>, Error> {
+    fn parse_input(&self, input: &str) -> Result<Vec<Step>> {
         let mut data = Vec::new();
         for c in input.trim().chars() {
             data.push(match c {
@@ -24,7 +24,7 @@ impl Solution {
 }
 
 impl DaySolution for Solution {
-    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>, Error> {
+    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>> {
         let data = self.parse_input(input)?;
         Ok(Box::new(data
              .iter()
@@ -35,7 +35,7 @@ impl DaySolution for Solution {
              .sum::<i32>()))
     }
 
-    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>, Error> {
+    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>> {
         let data = self.parse_input(input)?;
 
         let mut floor = 0;

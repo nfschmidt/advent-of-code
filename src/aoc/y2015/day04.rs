@@ -1,11 +1,11 @@
 use std::fmt::Display;
-use crate::aoc::{DaySolution, Error};
+use crate::aoc::{DaySolution, Error, Result};
 use md5::Digest;
 
 pub struct Solution;
 
 impl Solution {
-    fn solve_leading_zeros(&self, zeros_count: usize, input: &str) -> Result<u32, Error> {
+    fn solve_leading_zeros(&self, zeros_count: usize, input: &str) -> Result<u32> {
         for i in 0u32..std::u32::MAX {
             let data = format!("{}{}", input, i);
             let hash = md5::Md5::digest(data.as_bytes());
@@ -20,12 +20,12 @@ impl Solution {
 }
 
 impl DaySolution for Solution {
-    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>, Error> {
+    fn solve_part1(&self, input: &str) -> Result<Box<dyn Display>> {
         let data = input.trim();
         Ok(Box::new(self.solve_leading_zeros(5, &data)?))
     }
 
-    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>, Error> {
+    fn solve_part2(&self, input: &str) -> Result<Box<dyn Display>> {
         let data = input.trim();
         Ok(Box::new(self.solve_leading_zeros(6, &data)?))
     }

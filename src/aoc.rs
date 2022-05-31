@@ -40,11 +40,12 @@ impl fmt::Debug for Error {
 
 impl StdError for Error {}
 
+type Result<T> = std::result::Result<T, Error>;
 
 pub trait DaySolution {
-    fn solve_part1(&self, input: &str) -> Result<Box<dyn fmt::Display>, Error>;
+    fn solve_part1(&self, input: &str) -> Result<Box<dyn fmt::Display>>;
 
-    fn solve_part2(&self, input: &str) -> Result<Box<dyn fmt::Display>, Error>;
+    fn solve_part2(&self, input: &str) -> Result<Box<dyn fmt::Display>>;
 }
 
 #[cfg(test)]
