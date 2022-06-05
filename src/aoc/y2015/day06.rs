@@ -19,7 +19,7 @@ impl DaySolution<usize> for Solution {
         let mut lights = vec![Light::Off; 1_000_000];
         let mut instructions = Vec::new();
 
-        for line in input.lines() {
+        for line in input.trim().lines() {
             let fields = line.split_whitespace().collect::<Vec<_>>();
             if fields.len() < 4 {
                 return Err(Error::InvalidInput);
@@ -140,7 +140,7 @@ impl DaySolution<usize> for Solution {
         let mut brightness: Vec::<u32> = vec![0; 1_000_000];
         let mut instructions = Vec::new();
 
-        for line in input.lines() {
+        for line in input.trim().lines() {
             let fields = line.split_whitespace().collect::<Vec<_>>();
             if fields.len() < 4 {
                 return Err(Error::InvalidInput);
@@ -251,5 +251,49 @@ impl DaySolution<usize> for Solution {
             .sum::<u32>() as usize;
 
         Ok(result)
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::aoc::test::{test_case, Part};
+
+    #[test]
+    fn solve_part1_case_1() {
+        test_case(Part::One, Solution, "turn on 0,0 through 999,999", 1_000_000);
+    }
+
+    #[test]
+    fn solve_part1_case_2() {
+        // 4 on before toggling the first column
+        // should result in 1_000 - 4 lights on
+        let input = "
+            turn on 0,0 through 3,0
+            toggle 0,0 through 999,0
+        ";
+
+        test_case(Part::One, Solution, input, 1_000 - 4);
+    }
+
+    #[test]
+    fn solve_part1_case_3() {
+        // turn on everything except for 4 in the middle
+        // should result in 1_000_000 - 4 lights on
+        let input = "
+            turn on 0,0 through 999,999
+            turn off 499,499 through 500,500
+        ";
+        test_case(Part::One, Solution, input, 1_000_000 - 4);
+    }
+
+    #[test]
+    fn solve_part2_case_1() {
+        test_case(Part::Two, Solution, "turn on 0,0 through 0,0", 1);
+    }
+
+    #[test]
+    fn solve_part2_case_2() {
+        test_case(Part::Two, Solution, "toggle 0,0 through 999,999", 2_000_000);
     }
 }
