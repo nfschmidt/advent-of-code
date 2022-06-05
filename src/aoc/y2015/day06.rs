@@ -14,90 +14,94 @@ enum Light {
     Off,
 }
 
+struct InstructionsIterator<'a> {
+    lines: std::str::Lines<'a>,
+}
+
+impl<'a> InstructionsIterator<'a> {
+    fn new(input: &'a str) -> Self {
+        InstructionsIterator {
+            lines: input.trim().lines(),
+        }
+    }
+
+    fn parse_ranges(fields: &[&str], range1_idx: usize, range2_idx: usize) -> Result<((u32, u32), (u32, u32))> {
+        let start_range = fields[range1_idx].split(',').collect::<Vec<_>>();
+        if start_range.len() != 2 {
+            return Err(Error::InvalidInput);
+        }
+
+        let start_row = start_range[0].parse::<u32>().map_err(|_| Error::InvalidInput)?;
+        let start_column = start_range[1].parse::<u32>().map_err(|_| Error::InvalidInput)?;
+
+        let end_range = fields[range2_idx].split(',').collect::<Vec<_>>();
+        if end_range.len() != 2 {
+            return Err(Error::InvalidInput);
+        }
+
+        let end_row = end_range[0].parse::<u32>().map_err(|_| Error::InvalidInput)?;
+        let end_column = end_range[1].parse::<u32>().map_err(|_| Error::InvalidInput)?;
+
+        Ok(((start_row, start_column), (end_row, end_column)))
+    }
+}
+
+impl<'a> std::iter::Iterator for InstructionsIterator<'a> {
+    type Item = Result<Instruction>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let line = self.lines.next()?;
+
+        let fields = line.split_whitespace().collect::<Vec<_>>();
+        if fields.len() < 4 {
+            return Some(Err(Error::InvalidInput));
+        }
+
+        match (fields[0], fields[1]) {
+            ("turn", "on") =>
+                return match Self::parse_ranges(&fields, 2, 4) {
+                    Ok(((start_row, start_column), (end_row, end_column))) =>
+                        Some(Ok(Instruction::On{
+                            from: (start_row, start_column),
+                            to: (end_row, end_column),
+                        })),
+                    _ => return Some(Err(Error::InvalidInput)),
+                },
+            ("turn", "off") =>
+                return match Self::parse_ranges(&fields, 2, 4) {
+                    Ok(((start_row, start_column), (end_row, end_column))) =>
+                        Some(Ok(Instruction::Off{
+                            from: (start_row, start_column),
+                            to: (end_row, end_column),
+                        })),
+                    _ => return Some(Err(Error::InvalidInput)),
+                },
+            ("toggle", _) =>
+                return match Self::parse_ranges(&fields, 1, 3) {
+                    Ok(((start_row, start_column), (end_row, end_column))) =>
+                        Some(Ok(Instruction::Toggle{
+                            from: (start_row, start_column),
+                            to: (end_row, end_column),
+                        })),
+                    _ => return Some(Err(Error::InvalidInput)),
+                },
+            (_, _) => return Some(Err(Error::InvalidInput)),
+        }
+    }
+}
+
+impl Solution {
+    fn instructions_iter<'a>(&self, input: &'a str) -> InstructionsIterator<'a> {
+        InstructionsIterator::new(input)
+    }
+}
+
 impl DaySolution<usize> for Solution {
     fn solve_part1(&self, input: &str) -> Result<usize> {
         let mut lights = vec![Light::Off; 1_000_000];
-        let mut instructions = Vec::new();
 
-        for line in input.trim().lines() {
-            let fields = line.split_whitespace().collect::<Vec<_>>();
-            if fields.len() < 4 {
-                return Err(Error::InvalidInput);
-            }
-
-            match (fields[0], fields[1]) {
-                ("turn", "on") => {
-                    let start_range = fields[2].split(',').collect::<Vec<_>>();
-                    if start_range.len() != 2 {
-                        return Err(Error::InvalidInput);
-                    }
-
-                    let start_row = start_range[0].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-                    let start_column = start_range[1].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-
-                    let end_range = fields[4].split(',').collect::<Vec<_>>();
-                    if end_range.len() != 2 {
-                        return Err(Error::InvalidInput);
-                    }
-
-                    let end_row = end_range[0].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-                    let end_column = end_range[1].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-
-                    instructions.push(Instruction::On{
-                        from: (start_row, start_column),
-                        to: (end_row, end_column),
-                    });
-                },
-                ("turn", "off") => {
-                    let start_range = fields[2].split(',').collect::<Vec<_>>();
-                    if start_range.len() != 2 {
-                        return Err(Error::InvalidInput);
-                    }
-
-                    let start_row = start_range[0].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-                    let start_column = start_range[1].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-
-                    let end_range = fields[4].split(',').collect::<Vec<_>>();
-                    if end_range.len() != 2 {
-                        return Err(Error::InvalidInput);
-                    }
-
-                    let end_row = end_range[0].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-                    let end_column = end_range[1].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-
-                    instructions.push(Instruction::Off{
-                        from: (start_row, start_column),
-                        to: (end_row, end_column),
-                    });
-                },
-                ("toggle", _) => {
-                    let start_range = fields[1].split(',').collect::<Vec<_>>();
-                    if start_range.len() != 2 {
-                        return Err(Error::InvalidInput);
-                    }
-
-                    let start_row = start_range[0].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-                    let start_column = start_range[1].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-
-                    let end_range = fields[3].split(',').collect::<Vec<_>>();
-                    if end_range.len() != 2 {
-                        return Err(Error::InvalidInput);
-                    }
-
-                    let end_row = end_range[0].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-                    let end_column = end_range[1].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-
-                    instructions.push(Instruction::Toggle{
-                        from: (start_row, start_column),
-                        to: (end_row, end_column),
-                    });
-                }
-                (_, _) => return Err(Error::InvalidInput),
-            }
-        }
-
-        for ins in instructions {
-            match ins {
+        for ins in self.instructions_iter(input) {
+            match ins? {
                 Instruction::On{from: (fr, fc), to: (tr, tc)} => {
                     for row in fr..=tr {
                         for col in fc..=tc {
@@ -138,87 +142,9 @@ impl DaySolution<usize> for Solution {
 
     fn solve_part2(&self, input: &str) -> Result<usize> {
         let mut brightness: Vec::<u32> = vec![0; 1_000_000];
-        let mut instructions = Vec::new();
 
-        for line in input.trim().lines() {
-            let fields = line.split_whitespace().collect::<Vec<_>>();
-            if fields.len() < 4 {
-                return Err(Error::InvalidInput);
-            }
-
-            match (fields[0], fields[1]) {
-                ("turn", "on") => {
-                    let start_range = fields[2].split(',').collect::<Vec<_>>();
-                    if start_range.len() != 2 {
-                        return Err(Error::InvalidInput);
-                    }
-
-                    let start_row = start_range[0].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-                    let start_column = start_range[1].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-
-                    let end_range = fields[4].split(',').collect::<Vec<_>>();
-                    if end_range.len() != 2 {
-                        return Err(Error::InvalidInput);
-                    }
-
-                    let end_row = end_range[0].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-                    let end_column = end_range[1].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-
-                    instructions.push(Instruction::On{
-                        from: (start_row, start_column),
-                        to: (end_row, end_column),
-                    });
-                },
-                ("turn", "off") => {
-                    let start_range = fields[2].split(',').collect::<Vec<_>>();
-                    if start_range.len() != 2 {
-                        return Err(Error::InvalidInput);
-                    }
-
-                    let start_row = start_range[0].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-                    let start_column = start_range[1].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-
-                    let end_range = fields[4].split(',').collect::<Vec<_>>();
-                    if end_range.len() != 2 {
-                        return Err(Error::InvalidInput);
-                    }
-
-                    let end_row = end_range[0].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-                    let end_column = end_range[1].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-
-                    instructions.push(Instruction::Off{
-                        from: (start_row, start_column),
-                        to: (end_row, end_column),
-                    });
-                },
-                ("toggle", _) => {
-                    let start_range = fields[1].split(',').collect::<Vec<_>>();
-                    if start_range.len() != 2 {
-                        return Err(Error::InvalidInput);
-                    }
-
-                    let start_row = start_range[0].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-                    let start_column = start_range[1].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-
-                    let end_range = fields[3].split(',').collect::<Vec<_>>();
-                    if end_range.len() != 2 {
-                        return Err(Error::InvalidInput);
-                    }
-
-                    let end_row = end_range[0].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-                    let end_column = end_range[1].parse::<u32>().map_err(|_| Error::InvalidInput)?;
-
-                    instructions.push(Instruction::Toggle{
-                        from: (start_row, start_column),
-                        to: (end_row, end_column),
-                    });
-                }
-                (_, _) => return Err(Error::InvalidInput),
-            }
-        }
-
-        for ins in instructions {
-            match ins {
+        for ins in self.instructions_iter(input) {
+            match ins? {
                 Instruction::On{from: (fr, fc), to: (tr, tc)} => {
                     for row in fr..=tr {
                         for col in fc..=tc {
