@@ -75,9 +75,9 @@ fn permutations(cities: &mut [City]) -> Vec<Vec<City>> {
 
     let mut result = vec![];
     for idx in (0..count).rev() {
-        let last = cities[count-1].clone();
+        let last = cities[count - 1].clone();
 
-        let mut perms = permutations(&mut cities[0..count-1]);
+        let mut perms = permutations(&mut cities[0..count - 1]);
         while let Some(mut perm) = perms.pop() {
             perm.push(last.clone());
             result.push(perm);
