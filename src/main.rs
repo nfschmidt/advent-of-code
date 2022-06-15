@@ -36,6 +36,7 @@ fn get_solution(year: u16, day: u8, part: Part) -> Option<Box<dyn Fn(&str) -> Re
         (2015, 7) => Some(transform(&y2015::day07::Solution, part)),
         (2015, 8) => Some(transform(&y2015::day08::Solution, part)),
         (2015, 9) => Some(transform(&y2015::day09::Solution, part)),
+        (2015, 10) => Some(transform(&y2015::day10::Solution, part)),
         _ => None,
     }
 }
