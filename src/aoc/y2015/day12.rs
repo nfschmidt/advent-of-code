@@ -52,7 +52,6 @@ fn json_sum(value: &Value) -> i64 {
 mod test {
     use super::*;
     use crate::aoc::test::{test_case, Part};
-    use serde_json::Value;
 
     #[test]
     fn solve_part1_case1() {
