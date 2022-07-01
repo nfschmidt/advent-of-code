@@ -4,87 +4,69 @@ use crate::aoc::{DaySolution, Error, Result};
 
 pub struct Solution;
 
-// TODO: remove duplicated code
 impl DaySolution<i32> for Solution {
     fn solve_part1(&self, input: &str) -> Result<i32> {
-        let mut people = HashSet::new();
-        let mut relations = HashMap::new();
+        let (people, relations) = parse_input(input)?;
 
-        for line in input.trim().lines() {
-            let fields = line.split_whitespace().collect::<Vec<_>>();
-            let p1 = fields[0];
-            let p2 = fields[10].trim_end_matches('.');
-            let score = match fields[2] {
-                "gain" => fields[3].parse().map_err(|_| Error::InvalidInput),
-                "lose" => fields[3]
-                    .parse()
-                    .map(|x: i32| -x)
-                    .map_err(|_| Error::InvalidInput),
-                _ => Err(Error::InvalidInput),
-            }?;
-
-            relations.insert((p1, p2), score);
-            people.insert(p1);
-            people.insert(p2);
-        }
-
-        let mut people = people.into_iter().collect::<Vec<_>>();
-        let perms = permutations(&mut people);
-
-        let mut result = happiness(&perms[0], &relations);
-        for perm in perms {
-            let score = happiness(&perm, &relations);
-            if score > result {
-                result = score;
-            }
-        }
-
-        Ok(result)
+        best_arrangement_score(&people, &relations)
     }
 
     fn solve_part2(&self, input: &str) -> Result<i32> {
-        // "" represents me
-        let mut people = HashSet::from([""]);
-        let mut relations = HashMap::new();
+        let (mut people, mut relations) = parse_input(input)?;
 
-        for line in input.trim().lines() {
-            let fields = line.split_whitespace().collect::<Vec<_>>();
-            let p1 = fields[0];
-            let p2 = fields[10].trim_end_matches('.');
-            let score = match fields[2] {
-                "gain" => fields[3].parse().map_err(|_| Error::InvalidInput),
-                "lose" => fields[3]
-                    .parse()
-                    .map(|x: i32| -x)
-                    .map_err(|_| Error::InvalidInput),
-                _ => Err(Error::InvalidInput),
-            }?;
-
-            relations.insert((p1, p2), score);
-            relations.insert((p1, ""), 0);
-            relations.insert(("", p1), 0);
-
-            people.insert(p1);
-            people.insert(p2);
+        for p in people.iter() {
+            relations.insert(("", p), 0);
+            relations.insert((p, ""), 0);
         }
+        people.push("");
 
-        let mut people = people.into_iter().collect::<Vec<_>>();
-        let perms = permutations(&mut people);
-
-        let mut result = happiness(&perms[0], &relations);
-        for perm in perms {
-            let score = happiness(&perm, &relations);
-            if score > result {
-                result = score;
-            }
-        }
-
-        Ok(result)
+        best_arrangement_score(&people, &relations)
     }
 }
 
+fn parse_input(input: &str) -> Result<(Vec<&str>, HashMap<(&str, &str), i32>)> {
+    let mut people = HashSet::new();
+    let mut relations = HashMap::new();
+
+    for line in input.trim().lines() {
+        let fields = line.split_whitespace().collect::<Vec<_>>();
+        let p1 = fields[0];
+        let p2 = fields[10].trim_end_matches('.');
+        let score = match fields[2] {
+            "gain" => fields[3].parse().map_err(|_| Error::InvalidInput),
+            "lose" => fields[3]
+                .parse()
+                .map(|x: i32| -x)
+                .map_err(|_| Error::InvalidInput),
+            _ => Err(Error::InvalidInput),
+        }?;
+
+        relations.insert((p1, p2), score);
+
+        people.insert(p1);
+        people.insert(p2);
+    }
+
+    Ok((people.into_iter().collect(), relations))
+}
+
+fn best_arrangement_score(people: &[&str], relations: &HashMap<(&str, &str), i32>) -> Result<i32> {
+    let perms = permutations(&people);
+
+    let mut result = happiness(&perms[0], &relations)?;
+    for perm in perms.into_iter().skip(1) {
+        let score = happiness(&perm, &relations)?;
+        if score > result {
+            result = score;
+        }
+    }
+
+    Ok(result)
+}
+
 // TODO: this logic was copypasted from day 09. Remove duplicated code
-fn permutations<'a>(items: &mut [&'a str]) -> Vec<Vec<&'a str>> {
+fn permutations<'a, T: ?Sized>(items: &[&'a T]) -> Vec<Vec<&'a T>> {
+    let mut items = items.iter().map(|i| *i).collect::<Vec<_>>();
     let count = items.len();
 
     if count == 0 {
@@ -112,25 +94,25 @@ fn permutations<'a>(items: &mut [&'a str]) -> Vec<Vec<&'a str>> {
     result
 }
 
-fn happiness(arrangement: &[&str], relations: &HashMap<(&str, &str), i32>) -> i32 {
+fn happiness(arrangement: &[&str], relations: &HashMap<(&str, &str), i32>) -> Result<i32> {
     let mut result = 0;
     for i in 0..arrangement.len() - 1 {
         result += relations
             .get(&(arrangement[i], arrangement[i + 1]))
-            .unwrap();
+            .ok_or(Error::InvalidInput)?;
         result += relations
             .get(&(arrangement[i + 1], arrangement[i]))
-            .unwrap();
+            .ok_or(Error::InvalidInput)?;
     }
 
     result += relations
         .get(&(arrangement[arrangement.len() - 1], arrangement[0]))
-        .unwrap();
+        .ok_or(Error::InvalidInput)?;
     result += relations
         .get(&(arrangement[0], arrangement[arrangement.len() - 1]))
-        .unwrap();
+        .ok_or(Error::InvalidInput)?;
 
-    result
+    Ok(result)
 }
 
 #[cfg(test)]
